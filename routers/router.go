@@ -18,6 +18,9 @@ func InitRouter() {
 		})
 	}
 
-	r.Run(setting.HttpPort)
+	err := r.Run(setting.HttpPort)
+	if err != nil {
+		return
+	}
 
 }
