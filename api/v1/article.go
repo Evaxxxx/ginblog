@@ -22,32 +22,6 @@ func AddArticle(c *gin.Context) {
 	})
 }
 
-// EditArt 编辑文章
-func EditArt(c *gin.Context) {
-	var data model.Article
-	id, _ := strconv.Atoi(c.Param("id"))
-	_ = c.ShouldBindJSON(&data)
-
-	code := model.EditArt(id, &data)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  code,
-		"message": errmsg.GetErrMsg(code),
-	})
-}
-
-// DeleteArt 删除文章
-func DeleteArt(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-
-	code := model.DeleteArt(id)
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":  code,
-		"message": errmsg.GetErrMsg(code),
-	})
-}
-
 // GetCateArt 查询分类下的所有文章
 func GetCateArt(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.Query("pagesize"))
@@ -118,6 +92,32 @@ func GetArt(c *gin.Context) {
 		"status":  code,
 		"data":    data,
 		"total":   total,
+		"message": errmsg.GetErrMsg(code),
+	})
+}
+
+// EditArt 编辑文章
+func EditArt(c *gin.Context) {
+	var data model.Article
+	id, _ := strconv.Atoi(c.Param("id"))
+	_ = c.ShouldBindJSON(&data)
+
+	code := model.EditArt(id, &data)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
+		"message": errmsg.GetErrMsg(code),
+	})
+}
+
+// DeleteArt 删除文章
+func DeleteArt(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	code := model.DeleteArt(id)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  code,
 		"message": errmsg.GetErrMsg(code),
 	})
 }

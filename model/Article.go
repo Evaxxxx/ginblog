@@ -27,33 +27,6 @@ func CreateArt(data *Article) int {
 	return errmsg.SUCCESS
 }
 
-// EditArt 编辑文章
-func EditArt(id int, data *Article) int {
-	var art Article
-	var maps = make(map[string]interface{})
-	maps["title"] = data.Title
-	maps["cid"] = data.Cid
-	maps["desc"] = data.Desc
-	maps["content"] = data.Content
-	maps["img"] = data.Img
-
-	err = db.Model(&art).Where("id = ? ", id).Updates(&maps).Error
-	if err != nil {
-		return errmsg.ERROR
-	}
-	return errmsg.SUCCESS
-}
-
-// DeleteArt 删除文章
-func DeleteArt(id int) int {
-	var art Article
-	err = db.Where("id = ? ", id).Delete(&art).Error
-	if err != nil {
-		return errmsg.ERROR
-	}
-	return errmsg.SUCCESS
-}
-
 // GetCateArt 查询分类下的所有文章
 func GetCateArt(id int, pageSize int, pageNum int) ([]Article, int, int64) {
 	var cateArtList []Article
@@ -85,8 +58,8 @@ func GetArt(pageSize int, pageNum int) ([]Article, int, int64) {
 	var err error
 	var total int64
 
-	db = db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, category.name")
-	err = db.Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("Category").Find(&articleList).Error
+	err = db.Select("article.id, title, img, created_at, updated_at, `desc`, comment_count, read_count, " +
+		"category.name").Limit(pageSize).Offset((pageNum - 1) * pageSize).Order("Created_At DESC").Joins("Category").Find(&articleList).Error
 	// 单独计数
 	db.Model(&articleList).Count(&total)
 	if err != nil {
@@ -101,8 +74,8 @@ func SearchArticle(title string, pageSize int, pageNum int) ([]Article, int, int
 	var articleList []Article
 	var err error
 	var total int64
-	db = db.Select("article.id,title, img, created_at, updated_at, `desc`, comment_count, read_count, Category.name")
-	err = db.Order("Created_At DESC").Joins("Category").Where("title LIKE ?", title+"%").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
+	err = db.Select("article.id,title, img, created_at, updated_at, `desc`, comment_count, read_count, "+
+		"Category.name").Order("Created_At DESC").Joins("Category").Where("title LIKE ?", title+"%").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
 	// 单独计数
 	db.Model(&articleList).Where("title LIKE ?",
 		title+"%",
@@ -112,4 +85,31 @@ func SearchArticle(title string, pageSize int, pageNum int) ([]Article, int, int
 		return nil, errmsg.ERROR, 0
 	}
 	return articleList, errmsg.SUCCESS, total
+}
+
+// EditArt 编辑文章
+func EditArt(id int, data *Article) int {
+	var art Article
+	var maps = make(map[string]interface{})
+	maps["title"] = data.Title
+	maps["cid"] = data.Cid
+	maps["desc"] = data.Desc
+	maps["content"] = data.Content
+	maps["img"] = data.Img
+
+	err = db.Model(&art).Where("id = ? ", id).Updates(&maps).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCESS
+}
+
+// DeleteArt 删除文章
+func DeleteArt(id int) int {
+	var art Article
+	err = db.Where("id = ? ", id).Delete(&art).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCESS
 }
